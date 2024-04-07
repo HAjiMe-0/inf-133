@@ -166,5 +166,8 @@ for row in cursor:
 # (1, 1, 1, '2024-01-15')
 # (2, 2, 2, '2024-01-30')
 
+#hacer commit 
+conn.commit()
+
 # Cerrar conexión
 conn.close()
