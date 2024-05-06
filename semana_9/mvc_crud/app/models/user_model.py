@@ -1,5 +1,5 @@
 
-from database import db
+from semana_10.mvc_api.app.database import db
 
 
 # `db.Model` es una clase base para todos los modelos de SQLAlchemy
@@ -11,17 +11,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    dateofborn = db.Column(db.Date, nullable=False)
 
     # Inicializa la clase `User`
-    def __init__(self, first_name, last_name,password,email,dateofborn ):
+    def __init__(self, first_name, last_name):
         self.first_name = first_name
         self.last_name = last_name
-        self.password = password
-        self.email = email
-        self.dateofborn = dateofborn
 
     # Guarda un usuario en la base de datos
     def save(self):
@@ -40,4 +34,9 @@ class User(db.Model):
 
     # Actualiza un usuario en la base de datos
     def update(self):
+        db.session.commit()
+
+    # Elimina un usuario de la base de datos
+    def delete(self):
+        db.session.delete(self)
         db.session.commit()

@@ -1,5 +1,5 @@
 
-from database import db
+from semana_10.mvc_api.app.database import db
 # `db.Model` es una clase base para todos los modelos de SQLAlchemy
 # Define la clase `User` que hereda de `db.Model`
 # `User` representa la tabla `users` en la base de datos

@@ -2,7 +2,7 @@ from flask import Flask
 # Importamos el controlador de usuarios
 from controllers import user_controller
 # Importamos la base de datos
-from database import db 
+from semana_10.mvc_api.app.database import db 
 
 # Inicializa la aplicación Flask
 app = Flask(__name__)
