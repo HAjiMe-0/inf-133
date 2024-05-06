@@ -1,18 +1,19 @@
 
 from database import db
+
+
 # `db.Model` es una clase base para todos los modelos de SQLAlchemy
 # Define la clase `User` que hereda de `db.Model`
 # `User` representa la tabla `users` en la base de datos
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     # Define las columnas de la tabla `users`
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
-    dateofborn = db.Column(db.Date(50), nullable=False)
-
+    dateofborn = db.Column(db.Date, nullable=False)
 
     # Inicializa la clase `User`
     def __init__(self, first_name, last_name,password,email,dateofborn ):
@@ -31,3 +32,12 @@ class User(db.Model):
     @staticmethod
     def get_all():
         return User.query.all()
+
+    # Obtiene un usuario por su id
+    @staticmethod
+    def get_by_id(id):
+        return User.query.get(id)
+
+    # Actualiza un usuario en la base de datos
+    def update(self):
+        db.session.commit()
