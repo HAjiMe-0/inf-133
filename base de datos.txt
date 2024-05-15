@@ -1,0 +1,37 @@
+1. 1. Desplegar las materias troncales de la Carrera de Informática que
+pasan clases en aulas con capacidad mayor a 50 y menor a 80 alumnos.
+Se llaman troncales aquellas materias donde la sigla inicia con las
+letras INF. Ordenar por Sigla.
+
+
+SELECT paralelo.sigla, paralelo.idparalelo, aula.capacidad
+FROM aula, paralelo
+WHERE paralelo.sigla like 'INF%' and aula.capacidad >50 and aula.capacidad < 80 and aula.idaula = paralelo.idaula
+ORDER BY paralelo.sigla
+
+2 Desplegar los estudiantes de nacionalidad 'BOLIVIANA' que están
+cursando materias en el paralelo 'B'.
+
+
+SELECT estudiante.apellido, estudiante.nombre, estudiante.nacionalidad
+FROM estudiante, inscrito
+WHERE estudiante.idestu = inscrito.idestu and inscrito.idparalelo like 'B' and estudiante.nacionalidad like 'BOLIVIANA'
+ORDER BY estudiante.apellido
+
+3. Desplegar las Materias (Sigla y Paralelo) que pasan clases los días
+LUNES y VIERNES en laboratorios.
+
+SELECT paralelo.sigla, paralelo.idparalelo, paralelo.diahora1, paralelo.diahora2, aula.tipo
+FROM aula, paralelo
+WHERE aula.tipo like 'LABORATORIO' and paralelo.idaula = aula.idaula and paralelo.diahora1 like 'LU%' and paralelo.diahora2 like 'VI%'
+order by paralelo.sigla, Paralelo.idparalelo
+
+4. Desplegar los estudiantes del sexo 'MASCULINO' inscritos en las
+materias de INF131 paralelo 'B', INF153 paralelo 'D' e INF161 paralelo
+'A'.
+
+SELECT estudiante.apellido, estudiante.nombre, inscrito.sigla, inscrito.idparalelo
+FROM estudiante, inscrito
+WHERE estudiante.sexo like 'MASCULINO' and estudiante.idestu = inscrito.idestu and inscrito.sigla like 'INF131' and inscrito.idparalelo like 'B' AND inscrito.sigla like 'INF153' and inscrito.idparalelo like 'D' AND inscrito.sigla like 'INF161' and inscrito.idparalelo like 'A'
+ORDER BY estudiante.apellido
+
