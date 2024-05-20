@@ -35,3 +35,58 @@ FROM estudiante, inscrito
 WHERE estudiante.sexo like 'MASCULINO' and estudiante.idestu = inscrito.idestu and inscrito.sigla like 'INF131' and inscrito.idparalelo like 'B' AND inscrito.sigla like 'INF153' and inscrito.idparalelo like 'D' AND inscrito.sigla like 'INF161' and inscrito.idparalelo like 'A'
 ORDER BY estudiante.apellido
 
+
+
+
+1. Desplegar las materias que son dictadas por docentes que tienen la
+edad de 55 años o más. Desplegar ordenado por semestre y sigla de
+la materia.
+a. Con Select Aninados o tabla temporal
+b. Sin Select Anidado
+
+Select tmp.Sigla, xm.Descripcion, tmp.Idparalelo, xm.Semestre
+From MATERIA xm,(Select xp.sigla, xp.Idparalelo
+From DOCENTE xd, PARALELO xp
+Where to_char(xd.Fecnaci,'yyyy')<=1969 and xd.Iddoc = xp.Iddoc)tmp
+Where xm.Sigla Like tmp.Sigla
+Order by xm.Semestre, tmp.Sigla
+
+Select xp.Sigla, xm.Descripcion, xp.Idparalelo, xm.Semestre
+From DOCENTE xd, PARALELO xp, MATERIA xm
+Where to_char(xd.Fecnaci,'yyyy')<=1969 and xd.Iddoc = xp.Iddoc
+and xm.Sigla Like xp.Sigla
+Order by xm.Semestre, xp.Sigla
+
+
+
+2. Listar alfabéticamente los docentes que dictan materias del primer,
+tercer y sexto semestre.
+a. Con Select Aninados o tabla temporal
+b. Sin Select Anidado
+
+2.
+
+Select Distinct tmp.Paterno, tmp.Materno, tmp.Nombre
+From MATERIA xm, (Select xd.Paterno, xd.Materno, xd.Nombre, xp.Sigla
+From DOCENTE xd, PARALELO xp
+Where xd.Iddoc = xp.Iddoc)tmp
+Where (xm.Semestre = 1 or xm.Semestre = 3 or xm.Semestre = 6) and xm.Sigla = tmp.Sigla
+Order by tmp.Paterno
+
+2.2
+Select Distinct xd.Paterno, xd.Materno, xd.Nombre
+From MATERIA xm, DOCENTE xd, PARALELO xp
+Where (xm.Semestre = 1 or xm.Semestre = 3 or xm.Semestre = 6) and xd.Iddoc = xp.Iddoc and xm.Sigla = xp.Sigla
+Order by xd.Paterno
+
+3. Desplegar alfabéticamente los alumnos que están inscritos en 
+materias del quinto semestre en el paralelo ‘A’. 
+
+
+SELECT estudiante.apellido, estudiante.nombre, estudiante.nacionalidad,materia.sigla 
+FROM materia, estudiante, inscrito 
+WHERE materia.semestre = 5 
+and materia.sigla = inscrito.sigla 
+and inscrito.idparalelo like 'A' 
+and estudiante.idestu = inscrito.idestu 
+order by estudiante.apellido
