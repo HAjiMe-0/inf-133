@@ -90,3 +90,185 @@ and materia.sigla = inscrito.sigla
 and inscrito.idparalelo like 'A' 
 and estudiante.idestu = inscrito.idestu 
 order by estudiante.apellido
+
+
+
+1. Desplegar la cantidad de inscritos por materia. Desplegar
+ordenado por semestre y sigla
+
+
+SELECT  
+    MATERIA.semestre, 
+    MATERIA.sigla, 
+    MATERIA.descripcion, 
+    COUNT(INSCRITO.idestu) nroALU 
+FROM  
+    MATERIA, 
+    INSCRITO 
+WHERE  
+    MATERIA.sigla = INSCRITO.sigla 
+GROUP BY  
+    MATERIA.semestre, MATERIA.sigla, MATERIA.descripcion 
+ORDER BY  
+    MATERIA.semestre, MATERIA.sigla; 
+
+
+    2. 
+ 
+SELECT  
+    DOCENTE.paterno, 
+    DOCENTE.materno, 
+    DOCENTE.nombre, 
+    SUM(PARALELO.horas) horasdictadas 
+FROM  
+    DOCENTE, 
+    PARALELO 
+WHERE  
+    DOCENTE.iddoc = PARALELO.iddoc 
+GROUP BY  
+    DOCENTE.paterno, DOCENTE.materno, DOCENTE.nombre 
+ORDER BY  
+    DOCENTE.paterno; 
+ 
+ 
+3. 
+ 
+SELECT  
+    ESTUDIANTE.apellido, 
+    ESTUDIANTE.nombre,  
+    COUNT(INSCRITO.sigla) nromaterias 
+FROM  
+    ESTUDIANTE, 
+    INSCRITO 
+WHERE  
+    ESTUDIANTE.idestu = INSCRITO.idestu 
+GROUP BY  
+    ESTUDIANTE.apellido, ESTUDIANTE.nombre 
+HAVING  
+    COUNT(INSCRITO.sigla) > 3 
+ORDER BY  
+    ESTUDIANTE.apellido
+
+1 del lic
+
+SELECT xm.descripcion, Tmp.sigla, xm.descripcion, Tmp.nroalu 
+FROM Materia xm, (SELECT sigla,count(*) nroAlu
+                FROM Inscrito
+                GROUP BY sigla) Tmp
+WHERE xm.sigla like Tmp.sigla
+order by xm.semestre, Tmp.sigla
+
+
+1. Desplegar la cantidad de créditos por estudiante, de sus materias inscritas.
+Desplegar ordenado alfabéticamente por apellido
+
+SELECT E.apellido, E.nombre, SUM(M.credito) nrocreditos
+FROM ESTUDIANTE E, MATERIA M, INSCRITO I
+WHERE I.idestu = E.idestu
+AND I.sigla = M.sigla
+ORDER BY E.apellido;
+
+SELECT E.apellido, E.nombre,  
+       (SELECT SUM(M.credito) 
+        FROM INSCRITO I, MATERIA M 
+        WHERE I.idestu = E.idestu 
+          AND I.sigla = M.sigla) nrocreditos 
+FROM ESTUDIANTE E 
+ORDER BY E.apellido; 
+
+2  . Desplegar el estudiante o estudiantes de INF111 del paralelo ‘B’ que obtuvieron
+la máxima nota final. Nota final es la suma de sus tres notas (Nota1 + Nota2 +
+Nota3).
+
+SELECT apellido, nombre, notafin 
+FROM ( 
+    SELECT E.idestu, E.nombre, E.apellido, (I.nota1 + I.nota2 + I.nota3) notafin 
+    FROM ESTUDIANTE E, INSCRITO I 
+    WHERE E.idestu = I.idestu 
+      AND I.sigla = 'INF111' 
+      AND I.idparalelo = 'B' 
+) EstudiantesNotas 
+WHERE notafin = ( 
+    SELECT MAX(nota1 + nota2 + nota3) 
+    FROM INSCRITO 
+    WHERE sigla = 'INF111' 
+      AND idparalelo = 'B'
+); 
+
+
+3. Desplegar las materias que son dictadas por docentes que dictan exactamente
+TRES materias. Ordenar por sigla.
+
+ SELECT M.sigla, M.descripcion 
+FROM MATERIA M 
+WHERE ( 
+    SELECT COUNT(*) 
+    FROM MATERIA M2 
+    WHERE M2.iddoc_cordi = M.iddoc_cordi 
+) = 3 
+ORDER BY M.sigla; 
+
+
+
+
+1. Desplegar los docentes que no dictan materias y no son coordinadores.
+
+SELECT dx.paterno dx.materno dx.nombre
+FROM DOCENTE dx
+
+SELECT mx.iddoc_cordi
+FROM materia mx
+
+
+SELECT dx.paterno, dx.materno, dx.nombre
+FROM docente dx, (SELECT dx.iddoc
+                FROM docente dx
+                WHERE dx.iddoc NOT IN (Select mx.iddoc_cordi))tmp
+where tmp.iddoc = dx.iddoc;
+
+
+Select paterno, materno, nombre 
+from docente, (select docente.iddoc 
+                from docente  
+                where iddoc not in (select iddoc_cordi from materia) 
+                and iddoc not in (select  iddoc from paralelo)) tmp 
+where tmp.iddoc = docente.iddoc
+
+
+2. Desplegar las materias que no pasan clases en aulas de tipo 'TEORICA'
+
+
+SELECT DISTINCT M.sigla, M.descripcion
+FROM MATERIA M
+JOIN PARALELO P ON M.sigla = P.sigla
+JOIN AULA A ON P.idaula = A.idaula
+WHERE A.tipo != 'TEORICA';
+
+
+
+3. Desplegar docentes que solo dictan materias del primer al tercer semestre y
+NO dictan materias del 4to para arriba.
+
+SELECT D.paterno, D.materno, D.nombre
+FROM DOCENTE D
+WHERE D.iddoc IN (
+    SELECT P.iddoc
+    FROM PARALELO P
+    JOIN MATERIA M ON P.sigla = M.sigla
+    WHERE M.semestre BETWEEN 1 AND 3
+    MINUS
+    SELECT P.iddoc
+    FROM PARALELO P
+    JOIN MATERIA M ON P.sigla = M.sigla
+    WHERE M.semestre >= 4
+);
+
+Select xd.Paterno, xd.Materno, xd.Nombre
+From DOCENTE xd
+Where xd.Iddoc in(Select xp.iddoc
+                  From PARALELO xp, MATERIA xm
+                  Where xp.sigla like xm.sigla and xm.semestre in('1','2','3'))
+and (xd.Iddoc not in(Select xp.iddoc
+                    From PARALELO xp, MATERIA xm
+                    Where xp.sigla like xm.sigla and xm.semestre in('4','5','6','7','8')))
+Order by xd.Paterno
